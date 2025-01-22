@@ -1,0 +1,52 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+         {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dark.css' %}">
+    <style>
+    body {
+    background-color: #121212;
+    color: #ffffff;
+    background-image: url('../static/assets/wallpaper.jpg');
+    background-repeat: repeat-y;
+    background-size: cover;
+    /* Use 'cover' to make the image cover the entire body */
+    background-position: top;
+    font-family: Arial, sans-serif;
+    margin-left:2px;
+    width: 100%;
+    min-height: 768px;
+}
+video {
+ width: 50%;
+ height: auto;   
+}
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Index Page!</h1>
+        {% load static %}
+
+    <a href="https://www.youtube.com/watch?v=bAbOgug6lCs"> <img style="position: fixed;top: 25px;right: 25px;z-index: 1000;" class ="media-item" src="{% static 'assets/title_small.jpg' %}" alt="Image" target="_blank"></a>
+    {% load static %}
+    <a href="https://flaskarchitect.com"> <img style="position: fixed;top: 260px;right: 25px;z-index: 1000;" class ="media-item" src="{% static 'assets/website_small.jpg' %}" alt="Image" target="_blank"></a>
+    <p><a class="refresh-button2" href="/show-image/">View Image</a></p>
+    <p><a class="refresh-button2" href="/show-text/">View Text File</a></p>
+    <p><a class="refresh-button2" href="/show-jonna/">Jonna Tutorial</a></p>
+    <p><a class="refresh-button2" href="/show-videos/">View Videos</a></p>
+
+           {% load static %}
+ 
+            <source src="{% static 'vokoscreen_captures/summary.mp3' %}" type="audio/mpeg">
+        </audio>
+        {% load static %}
+    <video controls>
+    <source src="{% static 'vokoscreen_captures/html_explanation.mp4' %}" type="video/mp4">
+    
+</video>
+</body>
+</html>

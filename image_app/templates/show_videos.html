@@ -1,0 +1,62 @@
+<!-- show_videos.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video List</title>
+    <link rel="stylesheet" href="{% static 'css/dark.css' %}">
+    <style>
+    body {
+    background-color: #121212;
+    color: #ffffff;
+    background-image: url('../static/assets/wallpaper.jpg');
+    background-repeat: repeat-y;
+    background-size: cover;
+    /* Use 'cover' to make the image cover the entire body */
+    background-position: top;
+    font-family: Arial, sans-serif;
+    margin-left:2px;
+    width: 100%;
+    min-height: 768px;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Available Videos</h1>
+            <a  class="refresh-button2" href="/">Home</a>
+    </header>
+
+    <main>
+        {% if videos %}
+            <ul>
+                {% for video in videos %}
+                    <li>
+                        {% load static %}
+                        <span><a href="{% static 'vokoscreen_captures/' %}{{ video }}" target="_blank">
+                            {{ video }}</a></span>
+                        </a>
+                        <video src="{% static 'vokoscreen_captures/' %}{{ video }}" controls></video>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No videos found in the directory.</p>
+        {% endif %}
+
+    </main>
+
+    <footer>
+<p>Mp3 Audio Only</p>
+        <audio style="width:35%;"controls>
+        {% load static %}
+ 
+            <source src="{% static 'vokoscreen_captures/summary.mp3' %}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <p>&copy; 2025. FlaskArchitect All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

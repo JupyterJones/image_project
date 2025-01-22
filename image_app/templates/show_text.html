@@ -1,0 +1,45 @@
+<!-- image_app/templates/show_text.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dark.css' %}">
+    <title>View Text File</title>
+    <style>
+    body {
+    background-color: #121212;
+    color: #ffffff;
+    background-image: url('../static/assets/wallpaper.jpg');
+    background-repeat: repeat-y;
+    background-size: cover;
+    /* Use 'cover' to make the image cover the entire body */
+    background-position: top;
+    font-family: Arial, sans-serif;
+    margin-left:2px;
+    width: 100%;
+    min-height: 768px;
+}
+    textarea {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    /*background-image: url('../static/assets/wallpaper.jpg');
+    background-repeat: repeat-y;
+    background-size: cover;
+    /* Use 'cover' to make the image cover the entire body */
+    background-position: top;
+    font-family: Arial, sans-serif;
+    margin-left:2px;
+    width: 100%;
+    min-height: 768px;
+}
+    </style>
+</head>
+<body>
+    <p>Session Text Content&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/show-image/">View Image</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/">Index</a></p>
+    <form>
+        <textarea rows="30" cols="95" readonly>{{ text_content }}</textarea>
+    </form>
+</body>
+</html>
