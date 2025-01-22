@@ -1,4 +1,5 @@
 <!-- show_image.html -->
+<!-- Django -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,14 +26,29 @@
     
 </head>
 <body>
-    <h1>Here is your image:</h1>
+    <h1>Here is your image: / show_image.html</h1>
     <p><a href="/show-text/">Show Text</a></p>
     <p><a href="/">Index</a></p>
-    <div class="media-container">
-    {% load static %}
 
-    <img class ="media-item" src="{% static 'images/image.jpg' %}" alt="Image">
-    <img class ="media-item" src="{% static 'images/title.jpg' %}" alt="Image">
+ <div class="media-container">
+    {% if images %}
+        <!-- Loop through the images list and display each image -->
+        {% for image in images %}
+        {% load static %}
+        <div class="media-item">
+            <img src="{% static 'images/' %}{{ image }}" alt="Image">
+            <br /.>
+            <span class="wrapit">  {{image}} </span>
+        </div>
+
+        {% endfor %}
+    {% else %}
+        <p>No images available.</p>
+    {% endif %}
+</div>
+
+
+
 </div>
 </body>
 </html>

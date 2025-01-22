@@ -1,0 +1,50 @@
+I am working on a Django project where the following functionality has been successfully implemented:
+
+    Basic Setup:
+        Django project and app are properly set up.
+        Static files are configured correctly and served without issues.
+
+    Image Display:
+        A view (show_image) renders an HTML page (show_image.html) that displays a static image (image.jpg) located in the static/ folder.
+
+    Text File Display:
+        A view (show_text) reads the content of a text file (session.txt) from the static/ folder and displays it in an HTML <textarea> on a page (show_text.html).
+        The <textarea> is styled using a dark theme.
+
+    Dark Theme Integration:
+        A dark.css file located in static/css/ applies a dark theme to all pages:
+            Black background.
+            White text.
+            Styled <textarea> with a dark background and contrasting text.
+            Highlight effects on focus.
+
+    Index Page:
+        An index.html page serves as the root page (http://localhost:8000/) and provides navigation links:
+            Link 1: /show-image/ for the image view.
+            Link 2: /show-text/ for the text file view.
+        The index page is fully styled with the same dark theme.
+
+    Working Setup:
+        All pages are functional:
+            http://localhost:8000/ (Index Page).
+            http://localhost:8000/show-image/ (Image Page).
+            http://localhost:8000/show-text/ (Text File Page).
+        Static files (CSS, images, and text files) are loading correctly.
+
+    index links:
+        <p><a class="refresh-button2" href="/show-image/">View Image</a></p>
+        <p><a class="refresh-button2" href="/show-text/">View Text File</a></p>
+        <p><a class="refresh-button2" href="/show-jonna/">Jonna Tutorial</a></p>
+        <p><a class="refresh-button2" href="/show-videos/">View Videos</a></p>
+        <p><a class="refresh-button2" href="/search-code/">Search Code</a></p>
+        <p><a class="refresh-button2" href="/edit_text/">Edit Text</a></p>
+
+    ----  settings.py  ----
+    ALLOWED_HOSTS = [
+        '127.0.0.1',    # Localhost
+        '192.168.1.106', # Your local network IP
+        'localhost',
+    ]
+Next Steps:
+
+I want to continue building on this Django project. Possible next features could include:

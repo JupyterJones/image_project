@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dark.css' %}">
+    <title>Edit Text Files</title>
+</head>
+<body>
+    <h1>Edit Text Files</h1>
+    <p><a class="refresh-button2" href="/">Home to Index</a></p>
+
+    <!-- Error Message (if any) -->
+    {% if error_message %}
+    <div style="color: red; margin-bottom: 10px;">{{ error_message }}</div>
+    {% endif %}
+
+    <!-- File Selector -->
+    <form method="GET" action="">
+        <label for="file-selector">Select a file to edit:</label>
+        <select id="file-selector" name="file" onchange="this.form.submit()">
+            <option value="">-- Select File --</option>
+            {% for file in files %}
+            <option value="{{ file }}" {% if file == selected_file %}selected{% endif %}>{{ file }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- File Editor -->
+    <form method="POST" action="">
+        {% csrf_token %}
+        <div>
+            <label for="filename">Filename:</label>
+            <input type="text" id="filename" name="filename" value="{{ selected_file }}" placeholder="Enter filename">
+        </div>
+
+        <div>
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" rows="15">{{ content }}</textarea>
+        </div>
+
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

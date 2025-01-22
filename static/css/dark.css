@@ -209,24 +209,18 @@ header {
 
 textarea {
     width: 100% !important;
-    min-height: 700px !important;
+    max-height: 400px !important;
     margin: 10px 0;
     padding: 10px;
-    font-size: 16px;
-}
-
-/* Textarea */
-textarea {
-    background-color: #333333;
+    background-color: rgba(0, 0, 0, 0.5);
     color: lightgreen;
-    padding: 10px;
     border-radius: 5px;
     overflow-x: auto;
     word-wrap: break-word;
     white-space: pre-wrap;
     word-break: break-all;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
     width: 100%; /* Make textarea responsive */
 }
@@ -355,12 +349,17 @@ a .refresh-button2 {
     box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     padding: 20px;
-    background-color: #282c34;   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
+    background-color: #282c34;
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     padding: 20px;
     background-color: #282c34;
-}
 
+}
+.wrapit {
+     white-space: pre-wrap;
+    overflow-wrap: break-word;   
+}
 video, audio {
     width: 100%; /* Make the video/audio take up the full width of its container */
     height: auto;
@@ -565,4 +564,33 @@ input[type="radio"] {
     outline: 2px solid #007BFF; /* Add a blue outline on hover */
     background-color: #f0f8ff; /* Change background color on hover */
     border-radius: 4px; /* Optional: Add rounded corners */
+}
+/* Sticky Header */
+.sticky {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0;
+    background-color: #772805;
+    padding: 10px 0;
+    z-index: 1000;
+    margin-bottom: 25px;
+    width: 100%;
+}
+button {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+select:focus, textarea:focus, input:focus {
+    outline: none;
+    border-color: #888;
 }

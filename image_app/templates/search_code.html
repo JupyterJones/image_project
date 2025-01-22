@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/dark2.css' %}">
+    <title>View Text File</title>
+    <style>
+
+</style>
+</head>
+<body>
+    <header class="sticky">
+        <input style="width:25%;margin-left: 20px;" type="text" id="search_input" placeholder="Enter text to search">
+        <button id="search_submit" onclick="searchInTextarea()">Find Next</button>
+
+
+        Session Text Content&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/show-image/">View Image</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/">Index</a>
+
+        </header>
+<div class="textarea-wrapper">
+    <div id="overlay" class="textarea-overlay"></div>
+    <textarea id="textarea" readonly>{{ text_content }}</textarea>
+</div>
+
+    <script>
+        let lastIndex = 0; // Tracks the last match position
+
+        function searchInTextarea() {
+            const textarea = document.getElementById("textarea");
+            const overlay = document.getElementById("overlay");
+            const searchInput = document.getElementById("search_input");
+            const searchText = searchInput.value;
+            const text = textarea.value;
+
+            if (!searchText) {
+                alert("Please enter a search term!");
+                return;
+            }
+
+            // Escape special characters for regex
+            const escapedSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedSearchText, "gi");
+
+            // Replace matches with highlights
+            const highlightedText = text.replace(regex, (match) => `<span class="highlight">${match}</span>`);
+            overlay.innerHTML = highlightedText;
+
+            // Scroll textarea to next match
+            const nextIndex = text.indexOf(searchText, lastIndex);
+            if (nextIndex === -1) {
+                alert("No more occurrences found!");
+                lastIndex = 0; // Reset for the next search
+                return;
+            }
+
+            textarea.focus();
+            textarea.setSelectionRange(nextIndex, nextIndex + searchText.length);
+            lastIndex = nextIndex + searchText.length;
+
+            // Synchronize overlay scrolling with textarea
+            syncOverlayScroll();
+        }
+
+        function syncOverlayScroll() {
+            const textarea = document.getElementById("textarea");
+            const overlay = document.getElementById("overlay");
+
+            // Ensure the overlay scrolls exactly as the textarea
+            overlay.scrollTop = textarea.scrollTop;
+            overlay.scrollLeft = textarea.scrollLeft;
+        }
+
+        // Attach scroll synchronization
+        document.getElementById("textarea").addEventListener("scroll", syncOverlayScroll);
+    </script>
+</body>
+</html>

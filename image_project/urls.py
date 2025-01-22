@@ -33,4 +33,6 @@ urlpatterns = [
     path('show-text/', views.show_text, name='show_text'),
     path('show-jonna/', views.show_jonna, name='show_jonna'),
     path('show-videos/', views.show_videos, name='show_videos'),
+    path('search-code/', views.search_code, name='search_code'),
+    path('edit-text/', views.edit_text, name='edit_text'),  # New route
 ]
