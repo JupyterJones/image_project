@@ -7,11 +7,14 @@ Python Django project to process images and videos for YouTube
 - Git installed (optional, for version control).
 
 ### Steps to Set Up a Django Project
+https://github.com/JupyterJones/image_project/archive/refs/heads/main.zip
+and unzip
 
+or git clone https://github.com/JupyterJones/image_project.git
 #### 1. Create and Activate a Virtual Environment
 ```bash
-mkdir my_django_project
-cd my_django_project
+
+cd image_project
 python3 -m venv venv
 ```
 - **Activate the Environment**:
