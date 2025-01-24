@@ -1,3 +1,7 @@
+A note to remember:
+This will crop a full screen capture to 940x540 video
+ffmpeg -ss 18 -i 2025-01-23_08-08-24video2.mp4 -i static/assets/django_frame.png -filter_complex "[0:v]crop=940:540:300:400,scale=1366x768,unsharp=5:5:1.0[v];[v][1:v]overlay=W-w-10:H-h-10" -y cropped_1366x768_with_frame_sharpened.mp4 && vlc cropped_1366x768_with_frame_sharpened.mp4
+
 You said:
 #/home/jack/Desktop/django-blog-app/manage.py
 """Django's command-line utility for administrative tasks."""

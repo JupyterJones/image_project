@@ -5,8 +5,11 @@ def list_volk_videos(directory='static/vokoscreen_captures'):
     Retrieves a sorted list of video files (with .mkv extension) in the given directory.
     """
     volk_directory = path.join(directory)
-    return sorted(fn for fn in listdir(volk_directory) if fn.endswith('.mp4'))
-
+    # Corrected code with parenthesis around the generator expression
+    video_files = sorted(
+    (fn for fn in listdir(volk_directory) if fn.endswith('.mp4')),
+    reverse=True)
+    return video_files
 def list_images(directory='static/images'):
     """
     Retrieves a sorted list of video files (with .mkv extension) in the given directory.

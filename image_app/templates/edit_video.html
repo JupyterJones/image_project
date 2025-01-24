@@ -1,0 +1,75 @@
+<!-- edit_video.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Video</title>
+       {% load static %}
+    <link rel="stylesheet" href="{% static 'css/vid_edit.css' %}">
+    <style>
+    body {
+     background-color: #121212;
+     color: #ffffff;
+
+     background-image: url("{% static 'assets/wallpaper.jpg' %}");
+     background-repeat: repeat-y;
+     background-size: cover;
+     /* Use 'cover' to make the image cover the entire body */
+     background-position: top;
+     font-family: Arial, sans-serif;
+     width: 100%;
+}
+
+
+
+
+    </style>
+</head>
+<body>
+
+    <h1>Edit Video</h1>
+    <a href="/" class="refresh-button3">Home</a>
+    {% if error %}
+        <p style="color: red;">Error: {{ error }}</p>
+    {% endif %}
+        <div id="wrapper">
+    {% if video_name %}
+        <p>Editing video: <strong>{{ video_name }}</strong></p>
+        <form action="/process-trim/" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="video_name" value="{{ video_name }}">
+            <label for="start_time">Start Time (seconds):</label>
+            <input type="text" id="start_time" name="start_time" required>
+            <br>
+            <label for="end_time">End Time (seconds):</label>
+            <input type="text" id="end_time" name="end_time" required>
+            <br>
+            <label for="crop_width">Crop Width:</label>
+            <input type="text" id="crop_width" name="crop_width" value="940">
+            <br>
+            <label for="crop_height">Crop Height:</label>
+            <input type="text" id="crop_height" name="crop_height" value="540">
+            <br>
+            <label for="crop_x">Crop X:</label>
+            <input type="text" id="crop_x" name="crop_x" value="300">
+            <br>
+            <label for="crop_y">Crop Y:</label>
+            <input type="text" id="crop_y" name="crop_y" value="400">
+            <br><br>
+            <button type="submit">Trim Video</button>
+        </form>
+        <br>
+
+           <div class="media-container">
+
+                <div class="media-item">
+
+        <video class="vid" src="{% static 'vokoscreen_captures/' %}{{ video_name }}" controls></video>
+</div>
+</div>
+    {% else %}
+        <p>No video selected.</p>
+    {% endif %}
+    </div>
+</body>
+</html>

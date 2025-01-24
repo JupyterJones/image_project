@@ -9,6 +9,116 @@
     <link rel="stylesheet" href="{% static 'css/dark.css' %}">
     <style>
     body {
+        background-color: #121212;
+        color: #ffffff;
+        background-image: url('../static/assets/wallpaper.jpg');
+        background-repeat: repeat-y;
+        background-size: cover;
+        background-position: top;
+        font-family: Arial, sans-serif;
+        margin-left: 2px;
+        width: 100%;
+        min-height: 768px;
+    }
+    .vid {
+        width: 90%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .media-item {
+        margin-bottom: 20px;
+    }
+    .select-video-button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 12px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+    }
+    .select-video-button:hover {
+        background-color: #45a049;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Available Videos</h1>
+        <a class="refresh-button2" href="/">Home</a>
+    </header>
+
+ <main>
+    {% if videos %}
+        <div class="media-container">
+            {% for video in videos %}
+                <div class="media-item">
+                    {% load static %}
+                    <a href="{% static 'vokoscreen_captures/' %}{{ video }}" target="_blank">
+                        <span class="wrapit">{{ video }}</span>
+                    </a>
+                    <br/><br/>
+                    <video class="vid" src="{% static 'vokoscreen_captures/' %}{{ video }}" controls></video>
+
+                    <!-- Form to Edit Crop Video -->
+                    <form method="POST" action="{% url 'edit_video' video_name=video %}">
+                        {% csrf_token %}
+                        <button type="submit" class="select-video-button">Edit Crop Video</button>
+                    </form>
+                    <hr>
+
+                    <!-- Form to trim this video -->
+                <form method="POST" action="{% url 'trim_video' %}">
+                {% csrf_token %}
+                <!-- Pass the video name via hidden input -->
+                <input type="text" name="video_name" value="{{ video }}">
+                <!--input type="hidden" name="video_name" value="{{ video }}"-->
+                <button type="submit" class="select-video-button">Edit This Video</button>
+                </form>
+
+                    {% if error_message %}
+                        <div class="error-message">
+                            {{ error_message }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No videos found in the directory.</p>
+    {% endif %}
+</main>
+
+    <footer>
+        <p>Mp3 Audio Only</p>
+        <audio style="width: 35%;" controls>
+            <source src="{% static 'vokoscreen_captures/summary.mp3' %}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <p>&copy; 2025. FlaskArchitect All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
+
+
+
+<!--
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video List</title>
+    <link rel="stylesheet" href="{% static 'css/dark.css' %}">
+    <style>
+    body {
     background-color: #121212;
     color: #ffffff;
     background-image: url('../static/assets/wallpaper.jpg');
@@ -21,6 +131,14 @@
     width: 100%;
     min-height: 768px;
 }
+.vid {
+    width: 90%;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    
+}
     </style>
 </head>
 <body>
@@ -31,20 +149,25 @@
 
     <main>
         {% if videos %}
-            <ul>
+            <div class="media-container">
                 {% for video in videos %}
-                    <li>
+                
                         {% load static %}
-                        <span><a href="{% static 'vokoscreen_captures/' %}{{ video }}" target="_blank">
-                            {{ video }}</a></span>
-                        </a>
-                        <video src="{% static 'vokoscreen_captures/' %}{{ video }}" controls></video>
-                    </li>
+                        <div class= "media-item">
+                        <a href="{% static 'vokoscreen_captures/' %}{{ video }}" target="_blank">
+                          <span class="wrapit">  {{video}} </span>
+                        </a><br/><br/>
+                        <video class="vid" src="{% static 'vokoscreen_captures/' %}{{ video }}" controls></video>
+                    </div>
+                 
                 {% endfor %}
-            </ul>
+            </div>
         {% else %}
             <p>No videos found in the directory.</p>
         {% endif %}
+{% if request.GET.error %}
+<p style="color: red;">{{ request.GET.error }}</p>
+{% endif %}
 
     </main>
 
@@ -60,3 +183,4 @@
     </footer>
 </body>
 </html>
+-->

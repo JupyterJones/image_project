@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Text Files</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .sticky {
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+            z-index: 1000;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+        .textarea-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        textarea {
+            width: 100%;
+            min-height: 500px;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: transparent;
+            border: 1px solid #444;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            position: absolute;
+            z-index: 1;
+        }
+        .textarea-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            color: lightgreen;
+            z-index: 2;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .highlight {
+            background-color: yellow;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="sticky">
+        <input type="text" id="search_input" placeholder="Enter text to search">
+        <button onclick="searchInTextarea()">Find Next</button>
+    </div>
+    <div class="textarea-wrapper">
+        <div id="overlay" class="textarea-overlay"></div>
+        <textarea id="textarea" readonly>{{ content }}</textarea>
+    </div>
+
+    <script>
+        let lastIndex = 0;
+
+        function searchInTextarea() {
+            const textarea = document.getElementById("textarea");
+            const overlay = document.getElementById("overlay");
+            const searchInput = document.getElementById("search_input");
+            const searchText = searchInput.value.trim();
+            const text = textarea.value;
+
+            if (!searchText) {
+                alert("Please enter a search term!");
+                return;
+            }
+
+            // Escape special characters for regex
+            const escapedSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(escapedSearchText, "gi");
+
+            // Escape HTML entities in the text and highlight matches
+            const escapedText = escapeHtml(text);
+            const highlightedText = escapedText.replace(regex, (match) => `<span class="highlight">${match}</span>`);
+            overlay.innerHTML = highlightedText;
+
+            // Find and scroll to the next match
+            const matchPositions = [];
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                matchPositions.push(match.index);
+            }
+
+            if (matchPositions.length === 0) {
+                alert("No occurrences found!");
+                return;
+            }
+
+            const nextMatchIndex = matchPositions.find((pos) => pos >= lastIndex) || matchPositions[0];
+            lastIndex = nextMatchIndex + searchText.length;
+
+            // Scroll the overlay to the match position
+            const highlightedSpans = overlay.querySelectorAll(".highlight");
+            if (highlightedSpans.length > 0) {
+                const targetSpan = highlightedSpans[matchPositions.indexOf(nextMatchIndex)];
+                if (targetSpan) {
+                    overlay.scrollTop = targetSpan.offsetTop - overlay.offsetHeight / 2;
+                }
+            }
+
+            // Reset to the first match after the last match
+            if (lastIndex >= text.length) {
+                lastIndex = 0;
+            }
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Initialize overlay with textarea content
+        document.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.getElementById("overlay");
+            const textarea = document.getElementById("textarea");
+            overlay.innerHTML = escapeHtml(textarea.value);
+        });
+
+        // Synchronize overlay scrolling with textarea
+        document.getElementById("textarea").addEventListener("scroll", () => {
+            const textarea = document.getElementById("textarea");
+            const overlay = document.getElementById("overlay");
+
+            overlay.scrollTop = textarea.scrollTop;
+            overlay.scrollLeft = textarea.scrollLeft;
+        });
+    </script>
+</body>
+</html>

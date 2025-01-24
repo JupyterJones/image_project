@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trim Video</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: gray;
+        }
+        .form-container h2 {
+            text-align: center;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-container input[type="text"],
+        .form-container input[type="number"],
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+        {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dark.css' %}">
+</head>
+<body>
+    <div class="form-container">
+        <h1>Trim Video</h1>
+        <a class="refresh-button2" href="{% url 'show_videos' %}">show_videos</a>
+        <a class="refresh-button2" href="{% url 'index' %}">Home</a>
+                {{requests}}
+<p>Video file: {{ video }}</p>
+<video class="vid" src="{% static 'vokoscreen_captures/' %}{{ video }}" controls></video>
+
+</form>
+</form>
+     <form method="POST" action="{% url 'trim_only' %}">
+    {% csrf_token %}
+    
+    <!-- Video Name (hidden field) -->
+    <input type="hidden" id="video_name" name="video_name" value="{{ video }}" required>
+    
+    <!-- Start Time -->
+    <label for="start_time">Start Time (in seconds):</label>
+    <input type="number" id="start_time" name="start_time" placeholder="Enter start time (e.g., 10.5)" step="0.1" required>
+    
+    <!-- End Time -->
+    <label for="end_time">End Time (in seconds):</label>
+    <input type="number" id="end_time" name="end_time" placeholder="Enter end time (e.g., 30.0)" step="0.1" required>
+    
+    <!-- Submit Button -->
+    <button type="submit">Trim Video</button>
+</form>
+
+
+    </div>
+</body>
+</html>

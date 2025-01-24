@@ -1,0 +1,602 @@
+Video Controls Fix
+user
+<!-- delete_app_videos.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete videos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .image-container {
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .directory-buttons {
+            margin: 20px;
+        }
+        .directory-button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .delete-button {
+            background-color: #ff4444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px;
+        }
+
+        body {
+            background-color: #2C2C2C;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .refresh-button {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: orange;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button2 {
+            display: inline-block;
+            padding: 5px;
+            margin: 10px;
+            font-size: 2em;
+            background-color: rgb(255, 225, 0);
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 1px;
+        }
+
+        .refresh-button:hover {
+            background-color: orange;
+        }
+
+        .sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            background-color: orange;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .video-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        figure {
+            max-width: 300px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-size: 1rem;
+            color: #cccccc;
+        }
+        pre {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        p {
+            color: white;
+            font-size: 24px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    img {
+        width: 200px;
+        height: auto;
+        
+        display: block;
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+      body {
+      background-color: rgb(156, 23, 23);
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .refresh-button {
+      display: inline-block;
+      padding: 5px;
+      margin: 10px;
+      font-size: 2em;
+      background-color: orange;
+      color: rgb(0, 0, 0);
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 1px;
+    }
+
+    .refresh-button2 {
+      display: inline-block;
+      padding: 5px;
+      margin: 10px;
+      font-size: 2em;
+      background-color: rgb(255, 225, 0);
+      color: rgb(0, 0, 0);
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 1px;
+    }
+
+    .refresh-button3 {
+      display: inline-block;
+      padding: 5px;
+      margin: 10px;
+      font-size: 2em;
+      background-color: blue;
+      color: yellow;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 1px;
+    }
+
+    .refresh-button:hover {
+      background-color: orange;
+    }
+
+    .sticky {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      background-color: orange;
+      padding: 10px 0;
+      z-index: 1000;
+    }
+
+    .video-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+
+    figure {
+      max-width: 300px;
+      margin: 10px;
+      text-align: center;
+    }
+
+    figcaption {
+      margin-top: 8px;
+      /* Keep the same margin */
+      font-size: 1.2vw;
+      /* Set a specific font size */
+      color: #cccccc;
+      /* Consistent color */
+      line-height: 1.5;
+      /* Set a specific line height for consistency */
+      text-align: center;
+      /* Center align if necessary */
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: rgb(156, 23, 23);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 23px;
+      color: black;
+      background-color: orange;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background-color: orange;
+    }
+
+    .round {
+      display: inline-block;
+      padding: 15px 15px 15px 15px;
+      min-width: 1vw;
+      min-height: 1vw;
+      font-size: 18px;
+      color: black;
+      background-color: red;
+      border: 2px black solid;
+      border-radius: 50%;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+    }
+    .responsive-img {
+  width: 256px;
+  height: 384px;
+  object-fit: cover;
+  display: block;
+}
+
+    </style>
+</head>
+<body>
+    <h1>Image Directory Manager delete_app_videos.html</h1>
+<a href="{{ url_for('index') }}">Home</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="{{ url_for('transfer_directories') }}">Transfer Directories</a>
+    <!-- Directory Selection Form -->
+    video_dirs = {{ video_dirs|tojson|safe }}
+    {{ video_dirs }}
+    <div class="directory-buttons">
+        <form method="POST">
+            {% for dir_name in video_dirs %}
+            <button type="submit" name="directory" value="{{ dir_name }}" class="directory-button">
+                {{ dir_name }}
+            </button>
+            {% endfor %}
+        </form>
+    </div>
+
+<!-- Image Display and Delete Form -->
+{% if selected_dir and videos %}
+<h2>Images in {{ selected_dir }}</h2>
+<form method="POST">
+    <input type="hidden" name="current_dir" value="{{ selected_dir }}">
+    <div class="image-grid">
+        <!-- "Select All" button -->
+        <button type="button" id="select-all-button" onclick="toggleSelectAll()">Select All</button>
+        <button type="button" id="deselect-all-button" onclick="toggleDeselectAll()">Deselect All</button>
+        
+        {% for video in videos %}
+        <div class="image-container">
+
+        <video src="{{ url_for('static', filename=selected_dir + '/' + video) }}" alt="{{ video }}" type="video/mp4" />
+        </video>
+        <input type="checkbox" name="selected_videos" class="image-checkbox" value="{{ video }}">
+        <label>{{ video }}</label>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" name="delete_images" class="delete-button">Delete Selected Images</button>
+</form>
+<script>
+    function toggleSelectAll() {
+        const checkboxes = document.querySelectorAll('.image-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = true);
+    }
+
+    function toggleDeselectAll() {
+        const checkboxes = document.querySelectorAll('.image-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+</script>
+{% elif selected_dir %}
+<p>No videos found in {{ selected_dir }}</p>
+{% endif %}
+</body>
+</html>                         
+this shows the videos but i cant click and view the 
+how do i fix 
+ChatGPT
+The issue arises because the `<video>` element in your HTML doesn't have any controls enabled, and it doesn't allow interaction for viewing the video. To enable video playback and interaction, you need to include the `controls` attribute in the `<video>` tag. Here's the corrected part of your template:
+
+### Fixed Code
+Replace this part of your HTML:
+
+```html
+<video src="{{ url_for('static', filename=selected_dir + '/' + video) }}" alt="{{ video }}" type="video/mp4" />
+</video>
+```
+
+With this:
+
+```html
+<video src="{{ url_for('static', filename=selected_dir + '/' + video) }}" alt="{{ video }}" type="video/mp4" controls>
+</video>
+```
+
+### Explanation
+- The `controls` attribute adds playback controls to the `<video>` element, such as play, pause, volume, and fullscreen options.
+- This makes the video clickable and allows users to interact with it.
+
+### Full Corrected Section
+Here's how the section would look with the updated `<video>` element:
+
+```html
+{% for video in videos %}
+<div class="image-container">
+    <video src="{{ url_for('static', filename=selected_dir + '/' + video) }}" alt="{{ video }}" type="video/mp4" controls>
+    </video>
+    <input type="checkbox" name="selected_videos" class="image-checkbox" value="{{ video }}">
+    <label>{{ video }}</label>
+</div>
+{% endfor %}
+```
+
+With this change, users can click on the videos to play them, and you still retain the functionality to delete selected videos using the checkboxes.
+user
+  <button type="submit" name="delete_videos" class="delete-button">Delete 
+or   <button type="submit" name="delete_app_videos" class="delete-button">Delete 
+ChatGPT
+The choice between `<button type="submit" name="delete_videos" class="delete-button">Delete</button>` and `<button type="submit" name="delete_app_videos" class="delete-button">Delete</button>` depends on the context of your Flask backend logic. Specifically, it depends on how you intend to handle the deletion of videos in your route.
+
+### **Considerations for Naming**
+1. **Consistency with Backend Handling:**
+   - If your Flask route checks for a form field named `delete_videos`, then use `name="delete_videos"`.
+   - If your route expects `delete_app_videos`, use `name="delete_app_videos"`.
+   
+2. **Clarity of Purpose:**
+   - Use `delete_videos` if this button is for deleting general videos.
+   - Use `delete_app_videos` if the context is specifically tied to application-related videos.
+
+### **Example Flask Route Handling**
+Here’s an example of how the backend logic might differ:
+
+#### Option 1: For `delete_videos`
+```python
+@app.route('/delete_videos', methods=['POST'])
+def delete_videos():
+    if 'delete_videos' in request.form:
+        selected_videos = request.form.getlist('selected_videos')
+        # Logic to delete the selected videos
+        for video in selected_videos:
+            video_path = os.path.join('static', 'temp_exp', video)
+            if os.path.exists(video_path):
+                os.remove(video_path)
+        flash('Selected videos have been deleted.')
+    return redirect(url_for('your_page'))
+```
+
+#### Option 2: For `delete_app_videos`
+```python
+@app.route('/delete_app_videos', methods=['POST'])
+def delete_app_videos():
+    if 'delete_app_videos' in request.form:
+        selected_videos = request.form.getlist('selected_videos')
+        # Logic to delete the selected videos
+        for video in selected_videos:
+            video_path = os.path.join('static', 'temp_exp', video)
+            if os.path.exists(video_path):
+                os.remove(video_path)
+        flash('Selected app videos have been deleted.')
+    return redirect(url_for('your_page'))
+```
+
+### **Which to Use?**
+- If the delete operation is specific to **application-related videos**, choose:
+  ```html
+  <button type="submit" name="delete_app_videos" class="delete-button">Delete</button>
+  ```
+
+- If the delete operation is general and applies to any videos in the directory, choose:
+  ```html
+  <button type="submit" name="delete_videos" class="delete-button">Delete</button>
+  ```
+
+### **Recommendation**
+Ensure that the `name` attribute matches the field name your Flask route is checking. If you’re unsure, double-check your Flask route logic and adjust accordingly.
+user
+@app.route('/delete_app_videos', methods=['GET', 'POST'])
+#@login_required
+def delete_app_videos():
+    # Directory to process
+
+    video_dirs = {
+        'videos': 'static/videos',
+        'video_history': 'static/video_history/',
+        'bash_vids': 'static/bash_vids',
+        'video_history_old': 'static/video_history_old',
+        'video_history': 'static/video_history',
+        'temp_exp': 'static/temp_exp',
+        'Videos': 'static/Videos'
+    }
+    
+    selected_dir = None
+    videos = []
+    
+    if request.method == 'POST':
+        if 'directory' in request.form:
+            selected_dir = request.form['directory']
+            # Get images from selected directory
+            source_directory = selected_dir
+            #process_and_size_videos(source_directory)
+
+            if selected_dir in video_dirs:
+                path = video_dirs[selected_dir]
+                videos = [f for f in os.listdir(path) if f.endswith(('.mp4', '.mkv', '.gif'))]
+        
+        if 'delete_images' in request.form:
+            selected_dir = request.form['current_dir']
+            videos_to_delete = request.form.getlist('selected_videos')
+            for videos in videos_to_delete:
+                try:
+                    os.remove(os.path.join(video_dirs[selected_dir], video))
+                except OSError as e:
+                    print(f"Error deleting {video}: {e}")
+            
+            # Refresh image list after deletion
+            if selected_dir in video_dirs:
+                path = video_dirs[selected_dir]
+                videos = [f for f in os.listdir(path) if f.endswith(('.mp4', '.mkv', '.gif'))]
+    
+    return render_template('delete_app_videos.html', 
+                         video_dirs=video_dirs, 
+                         selected_dir=selected_dir, 
+                         videos=videos)
+-----------------
+<body>
+    <h1>Image Directory Manager delete_app_videos.html</h1>
+<a href="{{ url_for('index') }}">Home</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="{{ url_for('transfer_directories') }}">Transfer Directories</a>
+    <!-- Directory Selection Form -->
+    video_dirs = {{ video_dirs|tojson|safe }}
+    {{ video_dirs }}
+    <div class="directory-buttons">
+        <form method="POST">
+            {% for dir_name in video_dirs %}
+            <button type="submit" name="directory" value="{{ dir_name }}" class="directory-button">
+                {{ dir_name }}
+            </button>
+            {% endfor %}
+        </form>
+    </div>
+
+<!-- Image Display and Delete Form -->
+{% if selected_dir and videos %}
+<h2>Images in {{ selected_dir }}</h2>
+<form method="POST">
+    <input type="hidden" name="current_dir" value="{{ selected_dir }}">
+    <div class="image-grid">
+        <!-- "Select All" button -->
+        <button type="button" id="select-all-button" onclick="toggleSelectAll()">Select All</button>
+        <button type="button" id="deselect-all-button" onclick="toggleDeselectAll()">Deselect All</button>
+        
+        {% for video in videos %}
+        <div class="image-container">
+<video src="{{ url_for('static', filename=selected_dir + '/' + video) }}" alt="{{ video }}" type="video/mp4" controls>
+</video>
+
+        <input type="checkbox" name="selected_videos" class="image-checkbox" value="{{ video }}">
+        <label>{{ video }}</label>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" name="delete_app_videos" class="delete-button">Delete Selected Images</button>
+</form>
+<script>
+    function toggleSelectAll() {
+        const checkboxes = document.querySelectorAll('.image-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = true);
+    }
+
+    function toggleDeselectAll() {
+        const checkboxes = document.querySelectorAll('.image-checkbox');
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+    }
+</script>
+{% elif selected_dir %}
+<p>No videos found in {{ selected_dir }}</p>
+{% endif %}
+</body>
+</html>                         
+----------------  this is not deleting the videos checked
+ChatGPT
+The issue with your code is likely in the handling of video deletion within the Flask route. Specifically, there are errors in how the `selected_videos` are processed and how the `os.remove` function is applied. Let's address the problems step by step:
+
+### Fixes:
+1. **Ensure Correct Video Directory Mapping**:
+   - The `video_dirs` dictionary is used to map directory names to their paths. Ensure that the selected directory (`selected_dir`) exists as a key in this dictionary.
+
+2. **Correctly Access Video File Names**:
+   - There’s a typo in the loop where you process `videos_to_delete`. You're using the loop variable name `videos`, which overwrites the original list. It should be `video`.
+
+3. **Check File Paths Before Deleting**:
+   - Ensure that the file paths are correctly constructed with `os.path.join`.
+
+4. **Match Button Name with Route**:
+   - The form uses `name="delete_app_videos"`. Your route needs to handle this correctly.
+
+### Corrected Flask Route:
+Here is the fixed version of your route:
+
+```python
+@app.route('/delete_app_videos', methods=['GET', 'POST'])
+def delete_app_videos():
+    # Directory to process
+    video_dirs = {
+        'videos': 'static/videos',
+        'video_history': 'static/video_history/',
+        'bash_vids': 'static/bash_vids',
+        'video_history_old': 'static/video_history_old',
+        'temp_exp': 'static/temp_exp',
+        'Videos': 'static/Videos'
+    }
+    
+    selected_dir = None
+    videos = []
+    
+    if request.method == 'POST':
+        if 'directory' in request.form:
+            selected_dir = request.form['directory']
+            # Fetch videos from selected directory
+            if selected_dir in video_dirs:
+                path = video_dirs[selected_dir]
+                videos = [f for f in os.listdir(path) if f.endswith(('.mp4', '.mkv', '.gif'))]
+        
+        if 'delete_app_videos' in request.form:
+            selected_dir = request.form.get('current_dir')
+            videos_to_delete = request.form.getlist('selected_videos')
+            
+            if selected_dir and selected_dir in video_dirs:
+                path = video_dirs[selected_dir]
+                for video in videos_to_delete:
+                    try:
+                        file_path = os.path.join(path, video)
+                        if os.path.exists(file_path):
+                            os.remove(file_path)
+                            print(f"Deleted: {file_path}")
+                        else:
+                            print(f"File not found: {file_path}")
+                    except OSError as e:
+                        print(f"Error deleting {video}: {e}")
+                
+                # Refresh video list after deletion
+                videos = [f for f in os.listdir(path) if f.endswith(('.mp4', '.mkv', '.gif'))]
+    
+    return render_template(
+        'delete_app_videos.html', 
+        video_dirs=video_dirs, 
+        selected_dir=selected_dir, 
+        videos=videos
+    )
+```
+
+### Key Changes:
+1. **Fixed Loop Variable**:
+   - Changed `videos` to `video` inside the deletion loop.
+2. **File Existence Check**:
+   - Used `os.path.exists(file_path)` before attempting to delete a file.
+3. **Refreshed Video List**:
+   - After deletion, updated the `videos` list to reflect the changes.
+
+### Adjustments in HTML:
+Ensure the button name matches what the route checks:
+
+```html
+<button type="submit" name="delete_app_videos" class="delete-button">Delete Selected Images</button>
+```
+
+### Debugging Tips:
+- Use `print` statements in the Flask route to log the values of `selected_dir`, `videos_to_delete`, and `file_path` to debug.
+- Ensure the directories and file paths in `video_dirs` are correct and accessible by the Flask application.
+
+This should fix the issue, and the selected videos should now be deleted as expected. Let me know if you encounter any further problems!
+

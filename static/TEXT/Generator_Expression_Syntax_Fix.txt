@@ -1,0 +1,26 @@
+Generator Expression Syntax Fix
+user
+return sorted(fn for fn in listdir(volk_directory) if fn.endswith('.mp4'), reverse=True)
+SyntaxError: Generator expression must be parenthesized
+ChatGPT
+The error occurs because the generator expression in the `sorted()` function must be enclosed in parentheses. Here's the corrected code:
+
+```python
+from os import listdir
+
+volk_directory = "your_directory_path_here"  # Replace with your directory path
+
+# Corrected code with parenthesis around the generator expression
+video_files = sorted(
+    (fn for fn in listdir(volk_directory) if fn.endswith('.mp4')),
+    reverse=True
+)
+
+print(video_files)
+```
+
+### Explanation of the Fix:
+- The generator expression `(fn for fn in listdir(volk_directory) if fn.endswith('.mp4'))` is now enclosed in parentheses. This is required to explicitly group the generator expression when passing it to a function like `sorted()`.
+
+If you encounter any other issues or want further improvements, let me know!
+

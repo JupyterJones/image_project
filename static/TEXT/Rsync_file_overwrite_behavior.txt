@@ -1,0 +1,88 @@
+Rsync file overwrite behavior
+user
+rsync -avz -e ssh --log-file=rsync-log.txt --no-links /mnt/HDD500/Flask_Make_Art/ jack@192.168.1.112:/home/jack/Desktop/Flask_Make_Art
+------------
+This will overwrite existing files with changes but keep any deleted files correct ?
+ChatGPT
+Yes, your command will **overwrite existing files** in the destination (`/home/jack/Desktop/Flask_Make_Art`) with the updated versions from the source (`/mnt/HDD500/Flask_Make_Art`) but will **not delete any files** on the destination that do not exist in the source.
+
+### Key Points:
+- **Files with the same name**: Updated in the destination if they differ from the source.
+- **Files deleted from the source**: **Will remain in the destination** since you haven't added the `--delete` flag.
+- **New files in the source**: Copied to the destination.
+
+If you want the destination to exactly mirror the source (deleting files in the destination that are not present in the source), you need to add the `--delete` option to your command:
+```bash
+rsync -avz -e ssh --log-file=rsync-log.txt --no-links --delete /mnt/HDD500/Flask_Make_Art/ jack@192.168.1.112:/home/jack/Desktop/Flask_Make_Art
+```
+
+Would you like to preserve the current behavior or modify it to include deletions?
+user
+I like the current behavior, I was just checking.
+ChatGPT
+Got it, Jack! Your current command is perfect for ensuring that updated and new files are synced while **keeping existing files in the destination** that may no longer exist in the source. It's great for situations where you want to back up or sync changes without losing older files on the destination.
+
+If you need further tweaks or additional flags explained, let me know! 😊
+user
+how can i get the free space human readable on the destination using ssh
+ChatGPT
+To check the free space on the destination server in a human-readable format using SSH, you can use the `df` (disk free) command. Here's how:
+
+### Command
+```bash
+ssh jack@192.168.1.112 'df -h /home/jack/Desktop/Flask_Make_Art'
+```
+
+### Explanation
+1. **`ssh jack@192.168.1.112`**: Connects to the destination server via SSH.
+2. **`df -h /home/jack/Desktop/Flask_Make_Art`**:
+   - `df`: Displays disk space usage.
+   - `-h`: Outputs sizes in a human-readable format (e.g., GB, MB).
+   - `/home/jack/Desktop/Flask_Make_Art`: Checks the disk usage for the specific directory or partition.
+
+### Sample Output
+You might see something like this:
+```
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1       100G   60G   40G  60% /
+```
+This tells you:
+- **Size**: Total size of the filesystem.
+- **Used**: Space already used.
+- **Avail**: Free space available.
+- **Use%**: Percentage of disk usage.
+- **Mounted on**: The mount point of the filesystem.
+
+Let me know if you'd like help automating this or incorporating it into your workflow! 😊
+user
+if the directory on the server does not exit does this command create it ?
+ChatGPT
+No, your `rsync` command will **not create the destination directory** (`/home/jack/Desktop/Flask_Make_Art`) on the remote server if it does not already exist. If the directory doesn't exist, `rsync` will return an error like:
+
+```
+rsync: change_dir "/home/jack/Desktop/Flask_Make_Art" failed: No such file or directory (2)
+```
+
+### To Ensure the Directory is Created:
+You can use the `--rsync-path` flag to create the directory automatically by combining `mkdir -p` (make directory if it doesn’t exist) with `rsync`. Here’s how:
+
+### Updated Command:
+```bash
+rsync -avz -e ssh --log-file=rsync-log.txt --no-links --rsync-path="mkdir -p /home/jack/Desktop/Flask_Make_Art && rsync" /mnt/HDD500/Flask_Make_Art/ jack@192.168.1.112:/home/jack/Desktop/Flask_Make_Art
+```
+
+### What This Does:
+1. **`mkdir -p /home/jack/Desktop/Flask_Make_Art`**:
+   - Ensures the directory is created if it doesn't exist.
+   - Does nothing if the directory already exists.
+2. **`&& rsync`**: Runs `rsync` only after successfully creating the directory.
+
+### Alternative Option:
+If you prefer a manual check, you can log in to the remote server and create the directory first:
+```bash
+ssh jack@192.168.1.112 'mkdir -p /home/jack/Desktop/Flask_Make_Art'
+```
+Then run your original `rsync` command.
+
+Let me know if you'd like to test this or need further help! 😊
+

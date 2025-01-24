@@ -19,7 +19,8 @@
     font-family: Arial, sans-serif;
     margin-left:2px;
     width: 100%;
-    min-height: 768px;
+    height: 100%;
+    min-height: 2000px;
 }
 video {
  width: 50%;
@@ -31,20 +32,32 @@ video {
     <h1>Welcome to the Index Page!</h1>
         {% load static %}
 
-    <a href="https://www.youtube.com/watch?v=bAbOgug6lCs"> <img style="position: fixed;top: 25px;right: 25px;z-index: 1000;" class ="media-item" src="{% static 'assets/title_small.jpg' %}" alt="Image" target="_blank"></a>
+    <a href="https://www.youtube.com/watch?v=bAbOgug6lCs"> <img style="position: fixed;top: 100px;right: 25px;z-index: 1000;" class ="media-item" src="{% static 'assets/title_small.jpg' %}" alt="Image" target="_blank"></a>
     {% load static %}
     <a href="https://flaskarchitect.com"> <img style="position: fixed;top: 260px;right: 25px;z-index: 1000;" class ="media-item" src="{% static 'assets/website_small.jpg' %}" alt="Image" target="_blank"></a>
-    <p><a class="refresh-button2" href="/show-image/">View Image</a></p>
-    <p><a class="refresh-button2" href="/show-text/">View Text File</a></p>
-    <p><a class="refresh-button2" href="/show-jonna/">Jonna Tutorial</a></p>
-    <p><a class="refresh-button2" href="/show-videos/">View Videos</a></p>
-    <p><a class="refresh-button2" href="/search-code/">Search Code</a></p>
-    <p><a class="refresh-button2" href="/edit-text/">Edit Text</a></p>
-           {% load static %}
+    <a class="refresh-button2" href="/show-image/">View Image</a>&nbsp;&nbsp;&nbsp;
+    <a class="refresh-button2" href="/show-text/">View Text File</a>&nbsp;&nbsp;&nbsp;
+
+    <a class="refresh-button2" href="/show-jonna/">Jonna Tutorial</a>&nbsp;&nbsp;&nbsp;
+    <a class="refresh-button2" href="/show-videos/">View Videos</a><br/><br/>
+    <a class="refresh-button2" href="/search-code/">Search Code</a>&nbsp;&nbsp;&nbsp;
+    <a class="refresh-button2" href="/edit-text/">Edit Text</a>&nbsp;&nbsp;&nbsp;
+    <a class="refresh-button2" href="/edit-video/">Edit Video</a><br/><br/>
+    <hr/>
+           
+ <br/><br/>
+
+<p>Mp3 Audio Only</p>
+<a href="{% static 'vokoscreen_captures/summary.mp3' %}" target="_blank">Download</a>
+        <audio style="width:35%;" controls>
+        {% load static %}
  
             <source src="{% static 'vokoscreen_captures/summary.mp3' %}" type="audio/mpeg">
+            Your browser does not support the audio element.
         </audio>
-        {% load static %}
+
+ <br/><br/>
+        {% load static %}<br/><br/><br/><br/>
     <video controls>
     <source src="{% static 'vokoscreen_captures/html_explanation.mp4' %}" type="video/mp4">
     

@@ -1,0 +1,21 @@
+<!-- trimmed_video.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trimmed Video</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dark.css' %}">
+</head>
+<body>
+    <h1>Trimmed Video</h1>
+    <video width="640" height="360" controls>
+        <source src="{% static 'trimmed_videos/' %}{{ video_name }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <br>
+    <a class="refresh-button2" href="/show-videos/">Back to Video List</a>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Text Files</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin-left: 2px;
+            width: 100%;
+            min-height: 768px;
+        }
+
+        .sticky {
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+            z-index: 1000;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        /* Style the textarea */
+        textarea {
+            width: 100%;
+            height: 500px;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: lightgreen;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 20px;
+            outline: none;
+            position: relative;
+            z-index: 2; /* Keep textarea on top */
+        }
+
+        /* Highlighted search text */
+        .highlight {
+            background-color: yellow;
+            color: black;
+            font-weight: bold;
+        }
+
+ 
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Make sure that textarea and highlight container align perfectly */
+        .textarea-wrapper {
+            position: relative;
+        }
+
+.highlight-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+    z-index: -1; 
+    /* Ensure content doesn't overlap the textarea */
+    overflow: hidden; 
+}
+    </style>
+</head>
+<body>
+
+    <div class="sticky">
+        <input type="text" id="search_input" placeholder="Enter text to search">
+        <button onclick="searchInTextarea()">Find Next</button>
+    </div>
+
+    <!-- Dropdown for selecting a file -->
+    <form method="GET" action="">
+        <label for="file-selector">Select a file to edit:</label>
+        <select id="file-selector" name="file" onchange="this.form.submit()">
+            <option value="">-- Select File --</option>
+            {% for file in files %}
+                <option value="{{ file }}" {% if file == selected_file %}selected{% endif %}>{{ file }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div>
+                <label for="filename">Filename:</label>
+                <input type="text" id="filename" name="filename" value="{{ selected_file }}" placeholder="Enter filename">
+            </div>
+
+            <!-- Textarea and Highlight Container -->
+            <div class="textarea-wrapper">
+                <!-- Container for highlighted search terms
+                <div id="highlight-container" class="highlight-container"></div> -->
+                <textarea id="textarea" name="content">{{ content }}</textarea>
+            </div>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+
+    <script>
+function searchInTextarea() {
+  const textarea = document.getElementById("textarea");
+  const searchInput = document.getElementById("search_input");
+  const searchText = searchInput.value.trim();
+  let text = textarea.value;
+
+  if (!searchText) {
+    alert("Please enter a search term!");
+    return;
+  }
+
+  // Escape special characters for regex
+  const escapedSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapedSearchText, "gi");
+
+  // Create a temporary element to hold the highlighted text
+  const tempElement = document.createElement('div');
+  tempElement.innerHTML = text.replace(regex, '<span class="highlight">$&</span>'); 
+
+  // Get the innerHTML of the temporary element with highlights
+  const highlightedHtml = tempElement.innerHTML; 
+
+  // Update the textarea's value with the highlighted HTML
+  textarea.value = highlightedHtml; 
+
+  // Handle the scrolling after searching (if needed)
+  // ... (your existing scrolling logic here) ...
+}
+    </script>
+
+</body>
+</html>

@@ -23,6 +23,7 @@ urlpatterns = [
 ]
 
 """
+# urls.py
 from django.contrib import admin
 from django.urls import path
 from image_app import views
@@ -34,5 +35,11 @@ urlpatterns = [
     path('show-jonna/', views.show_jonna, name='show_jonna'),
     path('show-videos/', views.show_videos, name='show_videos'),
     path('search-code/', views.search_code, name='search_code'),
-    path('edit-text/', views.edit_text, name='edit_text'),  # New route
+    path('edit-text/', views.edit_text, name='edit_text'),
+    path('trim-video/', views.trim_video, name='trim_video'),
+    path('edit-video/<str:video_name>/', views.edit_video, name='edit_video'),
+    path('process-trim/', views.process_trim, name='process_trim'),
+    path('trim-only/', views.trim_only, name='trim_only'),
+
+    
 ]

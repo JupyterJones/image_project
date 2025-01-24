@@ -1,0 +1,582 @@
+Image Resizing Error Fix
+user
+# Resize images
+image_list = glob.glob(os.path.join(image_directory, '*.png')) + glob.glob(os.path.join(image_directory, '*.jpg'))+ glob.glob(os.path.join(image_directory, '*.jpeg'))
+
+resized_images = []
+for image_path in image_list:
+    try:
+        img = Image.open(image_path)
+        logging.debug("Image mode for %s: %s", image_path, img.mode)  # Log the image mode
+        
+        # Handle different image modes
+        if img.mode == "RGBA":
+            img = img.convert("RGBA")
+        elif img.mode == "RGB":
+            img = img.convert("RGB")
+        elif img.mode == "L":
+            img = img.convert("RGBA")  # Convert grayscale to RGBA
+        elif img.mode == "CMYK":
+            img = img.convert("RGB")  # Convert CMYK to RGB
+        else:
+            img = img.convert("RGBA")  # Convert anything else to RGBA
+
+        resized_img = img.resize(STANDARD_SIZE, Image.Resampling.LANCZOS)  # Resize
+        
+        # Remove alpha channel if saving as JPEG
+        if img.mode == 'RGBA':
+            background = Image.new("RGB", resized_img.size, (255, 255, 255))  # White background
+            resized_img = Image.alpha_composite(background, resized_img)
+        
+        # Save as PNG or JPEG based on original extension
+        if image_path.lower().endswith(".png"):
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path))
+            resized_img.save(resized_path, format="PNG")
+        else:
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path))
+            resized_img.save(resized_path, format="JPEG")
+        
+        resized_images.append(resized_path)
+    except Exception as e:
+        logging.error("Error resizing image %s: %s", image_path, e)
+
+logging.info("Total resized images: %d", len(resized_images))
+------------
+2025-01-07 17:40:42,630 - DEBUG - Image mode for static/vid_resources/piclumen-1736242194529.png: RGBA
+2025-01-07 17:40:42,690 - ERROR - Error resizing image static/vid_resources/piclumen-1736242194529.png: image has wrong mode
+2025-01-07 17:40:42,691 - INFO - Total resized images: 0
+2025-01-07 17:40:42,691 - ERROR - No videos were generated. Aborting.
+Traceback (most recent call last):
+  File "/mnt/HDD500/Flask_Make_Art/step_Best_FlipBook", line 112, in <module>
+    raise RuntimeError("No videos were created. Check image processing and video generation steps.")
+RuntimeError: No videos were created. Check image processing and video generation steps.
+ChatGPT
+The error "image has wrong mode" in your log indicates that `Image.alpha_composite` was applied improperly or encountered an issue with the image mode. Specifically, `Image.alpha_composite` requires both images (background and the resized image) to be in "RGBA" mode. This mismatch can occur if the image isn't correctly prepared before attempting to composite.
+
+Here's a corrected and refined version of your script to handle this issue:
+
+### Updated Code:
+```python
+import os
+import glob
+import logging
+from PIL import Image
+
+# Configuration
+image_directory = "static/vid_resources/"
+resized_directory = "static/resized_images/"
+STANDARD_SIZE = (1920, 1080)  # Example target size
+
+# Logging setup
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
+# Ensure resized directory exists
+os.makedirs(resized_directory, exist_ok=True)
+
+# Gather image paths
+image_list = (
+    glob.glob(os.path.join(image_directory, '*.png')) +
+    glob.glob(os.path.join(image_directory, '*.jpg')) +
+    glob.glob(os.path.join(image_directory, '*.jpeg'))
+)
+
+resized_images = []
+
+# Process images
+for image_path in image_list:
+    try:
+        logging.debug("Processing image: %s", image_path)
+        img = Image.open(image_path)
+        logging.debug("Image mode for %s: %s", image_path, img.mode)
+
+        # Handle image modes
+        if img.mode not in ["RGB", "RGBA"]:
+            logging.debug("Converting image mode from %s to RGB(A)", img.mode)
+            img = img.convert("RGBA")
+
+        resized_img = img.resize(STANDARD_SIZE, Image.Resampling.LANCZOS)
+        
+        # Remove alpha channel if saving as JPEG
+        if resized_img.mode == 'RGBA':
+            background = Image.new("RGB", resized_img.size, (255, 255, 255))
+            resized_img = Image.alpha_composite(background, resized_img)
+        
+        # Save the image
+        if image_path.lower().endswith(".png"):
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path))
+            resized_img.save(resized_path, format="PNG")
+        else:
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path).replace('.png', '.jpg'))
+            resized_img.save(resized_path, format="JPEG")
+        
+        logging.info("Resized image saved: %s", resized_path)
+        resized_images.append(resized_path)
+    
+    except Exception as e:
+        logging.error("Error resizing image %s: %s", image_path, e)
+
+logging.info("Total resized images: %d", len(resized_images))
+```
+
+### Key Fixes:
+1. **Correctly Preparing `Image.alpha_composite`**:
+   - Ensured that the image being composited (`resized_img`) and the background are both in "RGBA" mode.
+   
+2. **Improved Logging**:
+   - Added debug logs to capture conversion steps and ensure traceability.
+
+3. **Robust Conversion Handling**:
+   - Images are explicitly converted to either "RGB" or "RGBA" as necessary.
+
+4. **Resized Image Saving**:
+   - PNG files retain their format, while non-PNG images (e.g., JPEG) are saved as JPEG files.
+
+### Notes:
+- Ensure the `resized_directory` has proper write permissions.
+- Update `STANDARD_SIZE` to the target size of your project.
+- If you're consistently processing a large number of images, consider implementing batching for better memory management. 
+
+Let me know if you need further assistance!
+user
+2025-01-07 17:44:42,247 - ERROR - Error resizing image static/vid_resources/piclumen-1736242194529.png: image has wrong mode
+2025-01-07 17:44:42,247 - INFO - Total resized images: 0
+2025-01-07 17:44:42,247 - ERROR - No videos were generated. Aborting.
+Traceback (most recent call last):
+  File "/mnt/HDD500/Flask_Make_Art/step_Best_FlipBook", line 109, in <module>
+    raise RuntimeError("No videos were created. Check image processing and video generation steps.")
+RuntimeError: No videos were created. Check image processing and video generation steps.
+------------------  same error ?
+ChatGPT
+If the same error persists ("image has wrong mode"), it means the issue likely lies in how the image mode is being processed before applying operations like resizing or alpha compositing. Let's diagnose and refine the code further with enhanced debugging and stricter checks for image modes.
+
+### Additional Fixes and Diagnostics:
+1. **Check Image Mode Explicitly**:
+   - Ensure that all images are converted to compatible modes before resizing or compositing.
+   - Log detailed information about problematic files for manual inspection if needed.
+
+2. **Graceful Fallback for Unknown Modes**:
+   - If an unexpected mode is encountered, log and skip the image instead of failing entirely.
+
+Here’s an updated version of the script with enhanced diagnostics and more robust handling:
+
+### Updated Script with Enhanced Debugging
+```python
+import os
+import glob
+import logging
+from PIL import Image
+
+# Configuration
+image_directory = "static/vid_resources/"
+resized_directory = "static/resized_images/"
+STANDARD_SIZE = (1920, 1080)  # Example target size
+
+# Logging setup
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
+
+# Ensure resized directory exists
+os.makedirs(resized_directory, exist_ok=True)
+
+# Gather image paths
+image_list = (
+    glob.glob(os.path.join(image_directory, '*.png')) +
+    glob.glob(os.path.join(image_directory, '*.jpg')) +
+    glob.glob(os.path.join(image_directory, '*.jpeg'))
+)
+
+resized_images = []
+
+# Process images
+for image_path in image_list:
+    try:
+        logging.debug("Processing image: %s", image_path)
+        img = Image.open(image_path)
+        logging.debug("Initial image mode: %s", img.mode)
+
+        # Handle image modes explicitly
+        if img.mode not in ["RGB", "RGBA", "L", "CMYK"]:
+            logging.warning("Unsupported image mode '%s' for %s. Skipping.", img.mode, image_path)
+            continue  # Skip unsupported modes
+
+        # Convert image to a supported mode
+        if img.mode in ["L", "CMYK"]:  # Grayscale or CMYK
+            logging.debug("Converting image mode '%s' to RGB.", img.mode)
+            img = img.convert("RGB")
+        elif img.mode != "RGBA":
+            logging.debug("Converting image mode '%s' to RGBA for processing.", img.mode)
+            img = img.convert("RGBA")
+
+        # Resize the image
+        resized_img = img.resize(STANDARD_SIZE, Image.Resampling.LANCZOS)
+
+        # Handle alpha channel if saving as JPEG
+        if resized_img.mode == "RGBA":
+            background = Image.new("RGB", resized_img.size, (255, 255, 255))
+            resized_img = Image.alpha_composite(background, resized_img)
+            logging.debug("Alpha channel removed for saving as JPEG.")
+
+        # Save the resized image
+        if image_path.lower().endswith(".png"):
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path))
+            resized_img.save(resized_path, format="PNG")
+        else:
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path).replace('.png', '.jpg'))
+            resized_img.save(resized_path, format="JPEG")
+
+        logging.info("Resized image saved: %s", resized_path)
+        resized_images.append(resized_path)
+
+    except Exception as e:
+        logging.error("Error resizing image %s: %s", image_path, e)
+
+# Final logging
+logging.info("Total resized images: %d", len(resized_images))
+if not resized_images:
+    logging.error("No resized images were generated. Check the image processing pipeline.")
+```
+
+### Changes Made:
+1. **Comprehensive Logging**:
+   - Detailed logs about image modes and conversion steps.
+   - Warnings for unsupported image modes.
+
+2. **Skip Unsupported Images**:
+   - The script now skips files with unsupported or unrecognized modes instead of crashing.
+
+3. **Graceful Handling of Grayscale and CMYK**:
+   - Explicit conversion of "L" (grayscale) and "CMYK" images to "RGB".
+
+4. **Fallback for Alpha Compositing**:
+   - Ensures `Image.alpha_composite` is only used when in "RGBA" mode.
+
+5. **Improved Debugging**:
+   - Logs every significant step for easier debugging.
+
+### Next Steps:
+- If the error still occurs, check if specific files are corrupt or unsupported by Pillow.
+- Manually inspect problematic images (`static/vid_resources/piclumen-1736242194529.png`) to verify their mode and properties using:
+  ```python
+  img = Image.open("static/vid_resources/piclumen-1736242194529.png")
+  print(img.mode)
+  print(img.size)
+  print(img.format)
+  ```
+
+Let me know if you need further assistance!
+user
+#!/home/jack/miniconda3/envs/cloned_base/bin/python
+import os
+import subprocess
+from PIL import Image
+import glob
+import random
+import imageio
+import numpy as np
+import shutil
+import uuid
+from moviepy.editor import *
+
+# Set up logging
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Directories
+image_directory = 'static/vid_resources'
+output_directory = 'static/temp_exp'
+resized_directory = os.path.join(output_directory, "resized_images")
+final_output_directory = "/home/jack/Desktop/HDD500/collections/vids/"
+
+# Ensure directories exist
+os.makedirs(output_directory, exist_ok=True)
+os.makedirs(resized_directory, exist_ok=True)
+os.makedirs(final_output_directory, exist_ok=True)
+
+# Standard size for all images
+STANDARD_SIZE = (500, 760)
+
+# Resize images
+image_list = glob.glob(os.path.join(image_directory, '*.png')) + glob.glob(os.path.join(image_directory, '*.jpg'))+ glob.glob(os.path.join(image_directory, '*.jpeg'))
+
+resized_images = []
+
+# Process images
+for image_path in image_list:
+    try:
+        logging.debug("Processing image: %s", image_path)
+        img = Image.open(image_path)
+        logging.debug("Initial image mode: %s", img.mode)
+
+        # Handle image modes explicitly
+        if img.mode not in ["RGB", "RGBA", "L", "CMYK"]:
+            logging.warning("Unsupported image mode '%s' for %s. Skipping.", img.mode, image_path)
+            continue  # Skip unsupported modes
+
+        # Convert image to a supported mode
+        if img.mode in ["L", "CMYK"]:  # Grayscale or CMYK
+            logging.debug("Converting image mode '%s' to RGB.", img.mode)
+            img = img.convert("RGB")
+        elif img.mode != "RGBA":
+            logging.debug("Converting image mode '%s' to RGBA for processing.", img.mode)
+            img = img.convert("RGBA")
+
+        # Resize the image
+        resized_img = img.resize(STANDARD_SIZE, Image.Resampling.LANCZOS)
+
+        # Handle alpha channel if saving as JPEG
+        if resized_img.mode == "RGBA":
+            background = Image.new("RGB", resized_img.size, (255, 255, 255))
+            resized_img = Image.alpha_composite(background, resized_img)
+            logging.debug("Alpha channel removed for saving as JPEG.")
+
+        # Save the resized image
+        if image_path.lower().endswith(".png"):
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path))
+            resized_img.save(resized_path, format="PNG")
+        else:
+            resized_path = os.path.join(resized_directory, os.path.basename(image_path).replace('.png', '.jpg'))
+            resized_img.save(resized_path, format="JPEG")
+
+        logging.info("Resized image saved: %s", resized_path)
+        resized_images.append(resized_path)
+
+    except Exception as e:
+        logging.error("Error resizing image %s: %s", image_path, e)
+
+# Final logging
+logging.info("Total resized images: %d", len(resized_images))
+if not resized_images:
+    logging.error("No resized images were generated. Check the image processing pipeline.")
+
+
+# Initialize a list to store the paths of generated videos
+video_paths = []
+image_list = resized_images
+
+# Generate videos from consecutive image pairs
+for i in range(len(image_list) - 1):
+    try:
+        base_image_path = image_list[i]
+        image_to_paste_path = image_list[(i - 1) % len(image_list)]
+
+        # Open the base image
+        base_image = Image.open(base_image_path).convert("RGBA")
+        bs = base_image.size
+
+        # Create frames for the video
+        IMG_SRC = []
+        for j in range(0, bs[0], 5):
+            current_frame = base_image.copy()
+            image_to_paste = Image.open(image_to_paste_path).convert("RGBA")
+            image_to_paste = image_to_paste.resize((bs[0] - j, bs[1]), Image.BICUBIC)
+            current_frame.paste(image_to_paste, (0, 0), image_to_paste)
+            IMG_SRC.append(np.array(current_frame))
+
+        # Save the frames as a video
+        output_video_path = os.path.join(output_directory, f'output_video_{i}.mp4')
+        imageio.mimsave(output_video_path, IMG_SRC, fps=30)
+
+        # Verify video creation
+        if os.path.exists(output_video_path):
+            video_paths.append(output_video_path)
+            logging.info("Generated video: %s", output_video_path)
+        else:
+            logging.warning("Failed to generate video: %s", output_video_path)
+    except Exception as e:
+        logging.error("Error processing images: %s", e)
+
+# Stop if no videos were generated
+if not video_paths:
+    logging.error("No videos were generated. Aborting.")
+    raise RuntimeError("No videos were created. Check image processing and video generation steps.")
+
+# Create input list for ffmpeg with absolute paths
+input_list_path = os.path.join(output_directory, "input_list.txt")
+with open(input_list_path, 'w') as input_list_file:
+    for video_path in video_paths:
+        abs_path = os.path.abspath(video_path)
+        input_list_file.write(f"file '{abs_path}'\n")
+
+# Log the input list
+logging.info("Input list for ffmpeg:")
+with open(input_list_path, 'r') as file:
+    logging.info(file.read())
+
+# Concatenate videos using ffmpeg
+concatenated_video_path = os.path.join(output_directory, "final_result.mp4")
+ffmpeg_command = f"ffmpeg -y -f concat -safe 0 -i {input_list_path} -c copy {concatenated_video_path}"
+
+try:
+    subprocess.run(ffmpeg_command, shell=True, check=True)
+    if os.path.exists(concatenated_video_path):
+        logging.info("Concatenated video created: %s", concatenated_video_path)
+    else:
+        raise FileNotFoundError("Concatenated video not found.")
+except subprocess.CalledProcessError as e:
+    logging.error("Error during ffmpeg concatenation: %s", e)
+    raise
+except Exception as e:
+    logging.error("Unexpected error: %s", e)
+    raise
+
+# Save the final output video with a unique name
+final_output_video_path = os.path.join(final_output_directory, str(uuid.uuid4()) + ".mp4")
+shutil.copyfile(concatenated_video_path, final_output_video_path)
+logging.info("Final video saved to %s", final_output_video_path)
+
+# Add title image and border
+def add_title_image(video_path, hex_color="#A52A2A"):
+    hex_color = random.choice(["#A52A2A", "#ad1f1f", "#16765c", "#7a4111", "#9b1050", "#8e215d", "#2656ca"])
+    title_image_path = "/mnt/HDD500/collections/assets/flipbook_title.png"
+    video_clip = VideoFileClip(video_path)
+    width, height = video_clip.size
+    blue_background = ColorClip((width + 50, height + 50), color=tuple(int(hex_color[i:i+2], 16) for i in (1, 3, 5)))
+    padded_video_clip = CompositeVideoClip([blue_background, video_clip.set_position((25, 25))])
+    padded_video_clip = padded_video_clip.set_duration(video_clip.duration)
+    title_image = ImageClip(title_image_path).set_duration(video_clip.duration).set_position(("center", 0)).resize(padded_video_clip.size)
+    composite_clip = CompositeVideoClip([padded_video_clip, title_image]).set_duration(video_clip.duration)
+    music_files = glob.glob("/mnt/HDD500/collections/music_long/*.mp3")
+    music_clip = AudioFileClip(random.choice(music_files)).subclip(20, 20 + video_clip.duration)
+    composite_clip = composite_clip.set_audio(music_clip)
+    final_path = os.path.join(final_output_directory, f"AI_Flipbook_{uuid.uuid4().hex}.mp4")
+    composite_clip.write_videofile(final_path, codec="libx264", audio_codec="aac")
+    # Copy to final output directory "static/temp_exp/step_AI_FlipbookX.mp4"
+    shutil.copyfile(final_path, "static/temp_exp/step_final_flipbookX.mp4")
+    final_video_path = "static/temp_exp/step_final_flipbookX.mp4"
+    return final_video_path
+
+if __name__ == "__main__":
+    add_title_image(final_output_video_path)
+
+-----------
+ces/piclumen-1736242194529.png
+2025-01-07 17:47:39,858 - DEBUG - STREAM b'IHDR' 16 13
+2025-01-07 17:47:39,858 - DEBUG - STREAM b'IDAT' 41 8192
+2025-01-07 17:47:39,858 - DEBUG - Initial image mode: RGBA
+2025-01-07 17:47:39,921 - ERROR - Error resizing image static/vid_resources/piclumen-1736242194529.png: image has wrong mode
+2025-01-07 17:47:39,921 - INFO - Total resized images: 0
+2025-01-07 17:47:39,921 - ERROR - No resized images were generated. Check the image processing pipeline.
+2025-01-07 17:47:39,921 - ERROR - No videos were generated. Aborting.
+Traceback (most recent call last):
+  File "/mnt/HDD500/Flask_Make_Art/step_Best_FlipBook", line 124, in <module>
+    raise RuntimeError("No videos were created. Check image processing and video generation steps.")
+RuntimeError: No videos were created. Check image processing and video generation steps.
+ChatGPT
+The error indicates that the image `static/vid_resources/piclumen-1736242194529.png` is being identified as having the mode `RGBA`, yet it still results in an error when processing. This suggests there may be an edge case in how the script is handling `RGBA` images or their associated data.
+
+Let's analyze the root cause and provide a solution:
+
+---
+
+### Possible Causes:
+1. **Corrupted or Malformed Image Data**:
+   - The image file might be valid enough to open but fails during resizing or compositing operations.
+
+2. **Alpha Channel Issue**:
+   - Even though the image is `RGBA`, its alpha data might be causing issues during processing.
+
+3. **Library Version Incompatibility**:
+   - Different versions of `Pillow` may handle edge cases differently. Ensure `Pillow` is up-to-date.
+
+---
+
+### Fixes:
+
+#### 1. Enhanced Debugging and Pre-Validation
+Add explicit checks to identify whether the image data or mode is causing the failure. For `RGBA` images, validate the alpha channel handling and fall back to a simple conversion if issues arise.
+
+#### 2. Updated Image Processing Code
+Replace the existing image processing logic with more robust handling:
+
+```python
+# Process images
+for image_path in image_list:
+    try:
+        logging.debug("Processing image: %s", image_path)
+        img = Image.open(image_path)
+        logging.debug("Initial image mode: %s", img.mode)
+
+        # Ensure the image is loaded properly
+        img.load()  # Force loading the image into memory to catch latent issues
+
+        # Convert to a supported mode if necessary
+        if img.mode not in ["RGB", "RGBA"]:
+            logging.debug("Converting image mode '%s' to RGB.", img.mode)
+            img = img.convert("RGB")
+
+        # Handle RGBA images explicitly
+        if img.mode == "RGBA":
+            try:
+                logging.debug("Processing RGBA image with alpha channel.")
+                background = Image.new("RGB", img.size, (255, 255, 255))
+                img = Image.alpha_composite(background, img)
+            except Exception as e:
+                logging.warning("Failed to process alpha channel: %s", e)
+                img = img.convert("RGB")  # Fallback to RGB conversion
+
+        # Resize the image
+        resized_img = img.resize(STANDARD_SIZE, Image.Resampling.LANCZOS)
+
+        # Save the resized image
+        resized_path = os.path.join(resized_directory, os.path.basename(image_path))
+        resized_img.save(resized_path, format="PNG" if image_path.lower().endswith(".png") else "JPEG")
+
+        logging.info("Resized image saved: %s", resized_path)
+        resized_images.append(resized_path)
+
+    except Exception as e:
+        logging.error("Error resizing image %s: %s", image_path, e)
+```
+
+---
+
+### Enhancements Made:
+1. **Force Image Loading**:
+   - `img.load()` ensures that latent file issues are caught early.
+
+2. **Fallback for RGBA Issues**:
+   - If `Image.alpha_composite` fails, fallback to a simple `RGB` conversion.
+
+3. **Better Error Logging**:
+   - More specific logs for debugging problematic images.
+
+---
+
+### Steps for Manual Validation:
+1. **Inspect the Problematic Image**:
+   - Open the image using Pillow directly:
+     ```python
+     from PIL import Image
+     img = Image.open("static/vid_resources/piclumen-1736242194529.png")
+     print(img.mode, img.size, img.format)
+     img.show()  # Open the image viewer to inspect
+     ```
+   - Verify the mode and dimensions.
+
+2. **Update Pillow**:
+   - Ensure Pillow is up-to-date:
+     ```bash
+     pip install --upgrade pillow
+     ```
+
+3. **Validate All Images**:
+   - Use a standalone script to check all images in `static/vid_resources`:
+     ```python
+     for image_path in image_list:
+         try:
+             img = Image.open(image_path)
+             img.load()
+             logging.info(f"{image_path} is valid: {img.mode}, {img.size}")
+         except Exception as e:
+             logging.error(f"Problem with {image_path}: {e}")
+     ```
+
+---
+
+Let me know how this works for you, Jack! If the issue persists, we can further refine the code or inspect the problematic images in detail.
+
