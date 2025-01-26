@@ -264,4 +264,25 @@ def trim_only(request):
     # Handle GET request or invalid method
     return render(request, 'trim_video.html', {'error': "Invalid request method."})
 
-    
+def delete_video(request, video_name):
+    if request.method == "POST":
+        # Construct the correct file path for the video
+        video_path = os.path.join(settings.BASE_DIR, 'static', 'vokoscreen_captures', video_name)
+
+        # Debug: Log the video path for troubleshooting
+        print(f"Attempting to delete video at: {video_path}")
+
+        # Check if the file exists before attempting to delete it
+        if os.path.exists(video_path):
+            try:
+                os.remove(video_path)
+                # Redirect back to the video list with a success message
+                return redirect('show_videos')
+            except Exception as e:
+                # Redirect with an error message if deletion fails
+                return redirect('show_videos', error=f"Error deleting video: {str(e)}")
+        else:
+            # Redirect with an error message if the file doesn't exist
+            return redirect('show_videos', error="Video file not found.")
+    # Redirect with a general error if method is not POST
+    return redirect('show_videos', error="Invalid request method.")

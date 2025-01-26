@@ -40,6 +40,7 @@ urlpatterns = [
     path('edit-video/<str:video_name>/', views.edit_video, name='edit_video'),
     path('process-trim/', views.process_trim, name='process_trim'),
     path('trim-only/', views.trim_only, name='trim_only'),
+    path('delete-video/<str:video_name>/', views.delete_video, name='delete_video'),
 
     
 ]

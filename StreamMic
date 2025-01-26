@@ -1,29 +1,10 @@
 #!/bin/bash
-#ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -f x11grab -framerate 30 -video_size 1366x760 -i :0.0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 -f flv test.fly
- #ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -f x11grab -framerate 30 -video_size 1366x760 -i :0.0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 -f flv video.fly #rtmp://a.rtmp.youtube.com/live2/jgsh-wgdg-grag-09xb-1ywk
- #jgsh-wgdg-grag-09xb-1ywk
-
-#ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -f x11grab -framerate 30 -video_size 650x768 -i :0.0+45 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 -f flv -y video2.fly
-
-#ffmpeg -f alsa -i hw:1,0 -f x11grab -framerate 30 -video_size 650x768 -i :0.0+45 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 -f flv -y /home/jack/Desktop/Video_Maker/static/videos/$(date)video3.fly
 file="/home/jack/Desktop/image_project/static/vokoscreen_captures/$(date +'%Y-%m-%d_%H-%M-%S')video2.mp4"
 echo $file
-#ffmpeg -f alsa -i plughw:1,0 -f x11grab -framerate 30 -video_size 650x768 -i :0.0+45 \
-#-c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 \
-#-f flv -y $file
-
-#ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -f x11grab -framerate 30 -video_size 1366x760 -i :0.0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120  -t 60 $file
-
-
-#ffmpeg -f alsa -i plughw:1,0 -f x11grab -framerate 30 -video_size 650x768 -i :0.0+45 \
-#-c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 -f flv -y \
-#/home/jack/Desktop/Video_Maker/static/videos/$(date)video3.fly
 
 ffmpeg -f x11grab -video_size 1360x768 -framerate 24 -i :0.0 \
 -f pulse -i default -preset veryfast -crf 18 -pix_fmt yuv420p $file
 
-
-#ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -f x11grab -framerate 30 -video_size 1366x760 -i :0.0 -c:v libx264 -preset ultrafast -pix_fmt yuv420p -c:a aac -strict -2 -g 120 -f flv -y $file
 vlc $file
 
 echo $file

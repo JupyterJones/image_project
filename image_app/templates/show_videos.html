@@ -44,6 +44,21 @@
     .select-video-button:hover {
         background-color: #45a049;
     }
+        .delete-video-button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 12px;
+        background-color: #e74c3c; /* Red color */
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .delete-video-button:hover {
+        background-color: #c0392b; /* Darker red */
+    }
     </style>
 </head>
 <body>
@@ -69,6 +84,11 @@
                         {% csrf_token %}
                         <button type="submit" class="select-video-button">Edit Crop Video</button>
                     </form>
+                    <form method="POST" action="{% url 'delete_video' video_name=video %}">
+    {% csrf_token %}
+    <button type="submit" class="delete-video-button">Delete</button>
+</form>
+
                     <hr>
 
                     <!-- Form to trim this video -->
@@ -77,7 +97,7 @@
                 <!-- Pass the video name via hidden input -->
                 <input type="text" name="video_name" value="{{ video }}">
                 <!--input type="hidden" name="video_name" value="{{ video }}"-->
-                <button type="submit" class="select-video-button">Edit This Video</button>
+                <button type="submit" class="select-video-button">Trim Video</button>
                 </form>
 
                     {% if error_message %}
